@@ -7,10 +7,16 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware CORS
 app.use(cors({
-    origin: '*',
+    origin: [
+        'http://localhost:5173',
+        'https://portafolio2-xi.vercel.app/'
+    ],
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Middleware para parsear JSON
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
