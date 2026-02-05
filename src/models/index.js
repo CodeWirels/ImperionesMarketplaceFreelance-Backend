@@ -1,37 +1,16 @@
-const sequelize = require('../config/database');
-const User = require('./User');
-const Product = require('./Product');
-const Purchase = require('./Purchase');
+const express = require('express');
+const cors = require('cors');
 
-// Definir relaciones
-User.hasMany(Purchase, { foreignKey: 'userId' });
-Purchase.belongsTo(User, { foreignKey: 'userId' });
+const app = express();
 
-Product.hasMany(Purchase, { foreignKey: 'productId' });
-Purchase.belongsTo(Product, { foreignKey: 'productId' });
+app.use(cors());
+app.use(express.json());
 
-// Sincronizar modelos con la base de datos
-const syncDatabase = async () => {
-    try {
-        console.log('🔄 Autenticando conexión a Neon...');
-        await sequelize.authenticate();
-        console.log('✅ Conexión a PostgreSQL Neon exitosa');
-        
-        console.log('🔄 Sincronizando modelos...');
-        await sequelize.sync({ alter: true });
-        console.log('✅ Base de datos sincronizada');
-        
-        return true;
-    } catch (error) {
-        console.error('❌ Error sincronizando BD:', error.message);
-        throw error;
-    }
-};
+app.get('/', (req, res) => {
+  res.json({ message: 'API VERCEL OK' });
+});
 
-module.exports = {
-    sequelize,
-    User,
-    Product,
-    Purchase,
-    syncDatabase
-};
+app.use('/api/auth', require('../routes/auth'));
+app.use('/api/products', require('../routes/products'));
+
+module.exports = app;
