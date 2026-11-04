@@ -3,16 +3,19 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://imperiones-marketplace-freelance.vercel.app',
+  'https://imperiones-marketplace-freelance-git-main-verhcks-projects.vercel.app',
+  'https://imperiones-marketplace-freelance-iqzqlqy1x-verhcks-projects.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
 /* ======================
    CORS
 ====================== */
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://portafolio2-xi.vercel.app',
-    'https://portafolio2-verhcks-projects.vercel.app'
-  ],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -39,7 +42,7 @@ app.get('/', (req, res) => {
 ====================== */
 app.get('/api/health', async (req, res) => {
   try {
-    const { sequelize } = require('../models');
+    const { sequelize } = require('./models');
 
     await sequelize.authenticate();
 
@@ -63,7 +66,7 @@ app.get('/api/health', async (req, res) => {
 ====================== */
 app.get('/api/users', async (req, res) => {
   try {
-    const { User } = require('../models');
+    const { User } = require('./models');
 
     const users = await User.findAll({
       attributes: ['id', 'email', 'fullName', 'createdAt'],
@@ -86,8 +89,8 @@ app.get('/api/users', async (req, res) => {
 /* ======================
    ROUTES
 ====================== */
-app.use('/api/auth', require('../routes/auth'));
-app.use('/api/products', require('../routes/products'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/products', require('./routes/products'));
 
 /* ======================
    ERROR HANDLER
